@@ -1,3 +1,7 @@
+################
+# Creating resource variable
+################
+
 variable "function_name" {
     default = ""
 }
@@ -12,9 +16,15 @@ variable "timeout" {
 }
 
 
- 
+###############
+# fetching current account id
+###############
+
 data "aws_caller_identity" "current" {}
 
+###############
+# Creating Lambda resource
+################
 resource "aws_lambda_function" "test_lambda" {
   function_name    = "${var.function_name}"
   role             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSRoleForLambda"
@@ -30,6 +40,9 @@ resource "aws_lambda_function" "test_lambda" {
   } 
 }
 
+##################
+# Creating s3 resource for invoking to lambda function
+##################
 resource "aws_s3_bucket" "bucket" {
   bucket = "my-test-bucket-eu-west-1"
   acl    = "private"
@@ -39,8 +52,9 @@ resource "aws_s3_bucket" "bucket" {
     Environment = "Dev"
   }
 }
+##################
 # Adding S3 bucket as trigger to my lambda and giving the permissions
-
+##################
 resource "aws_s3_bucket_notification" "aws-lambda-trigger" {
   bucket = "${aws_s3_bucket.bucket.id}"
   lambda_function {
@@ -58,6 +72,9 @@ resource "aws_lambda_permission" "test" {
   source_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 }
 
+###########
+# output of lambda arn
+###########
 output "arn" {
 
 value = "${aws_lambda_function.test_lambda.arn}"
