@@ -13,3 +13,4 @@ To start using AWS Lambda with Amazon S3, we need the following −
 * Create role which has permission to work with s3 and lambda
 * Create lambda function and add s3 as the trigger.
 
+![s3-invoke-lambda](s3-lambda.png)
